@@ -1,4 +1,4 @@
-import assert from 'assert';
+const assert = require('assert');
 
 function camel2Underline (_str) {
 	const str = _str[0].toLowerCase() + _str.substr(1);
@@ -10,7 +10,7 @@ function camel2Dash(_str) {
 	return str.replace(/([A-Z])/g, ($1) => `-${$1.toLowerCase()}`);
 }
 
-export default function core () {
+module.exports = function core () {
 	return ({ types }) => ({
 		visitor: {
 			ImportDeclaration (path, { opts }) {
@@ -42,12 +42,14 @@ export default function core () {
 							: opt.camel2DashComponentName
 								? camel2Dash(specifier.imported.name)
 								: specifier.imported.name;
-						return types.ImportDeclaration([types.ImportDefaultSpecifier(specifier.local)],
-							types.StringLiteral(opt.customSourceFunc(transformedSourceName)));
+						let pathed = opt.customSourceFunc(transformedSourceName);
+						let stringLiteral = types.StringLiteral(pathed);
+						let first = types.ImportDefaultSpecifier(specifier.local);
+						return types.ImportDeclaration([first], stringLiteral);
 					});
 					path.replaceWithMultiple(declarations);
 				}
 			}
 		}
 	});
-}
+};

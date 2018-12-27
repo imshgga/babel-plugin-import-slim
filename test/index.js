@@ -1,7 +1,7 @@
 const babel = require('babel-core');
 const types = require('babel-types');
 
-const plugin = require('./../lib/index.js');
+const plugin = require('./../src/index.js');
 
 const visitor = plugin({types});
 
